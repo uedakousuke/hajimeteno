@@ -1,5 +1,35 @@
 //expressをロードして、
-const express = require("express"),
+const express = require("express")
+//MongoDBモジュールをロードする
+const MongoDB =require("mongodb").MongoClient,
+      dbURL = "mongodb://127.0.0.1:27017",
+      dbName = "recipe_db";
+      //ローカルデータベースサーバーへの接続を設定
+MongoDB.connect(dbURL,(error,client) => {
+    if(error) throw error;
+    //MongoDBサーバーへの接続から、recipe_dbデータベースを取得
+    let db =client.db(dbName);
+    // contactsコレクションから全レコードを取り出す
+    db.collection("contacts")
+    .find()
+    .toArray((error,data) => {
+        if (error) throw error;
+        console.log(data);
+        //結果をコンソールにログ出力
+    });
+    db.collection("contacts").insert(
+        {
+            name: "Freddie Mercury",
+            email: "fred@queen.com"
+        },
+        (error,db) => {
+            if(error)throw error;
+            console.log(db);
+        }
+    );
+});
+
+
 //expressアプリケーションを実体化する
 app = express();
 const homeController = require("./controllers/homeController");

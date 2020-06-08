@@ -1,0 +1,25 @@
+{
+  "name": "recipe_connection",
+  "version": "1.0.0",
+  "description": "\"An app to share cooking recipes\",",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uedakousuke/hajimeteno.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uedakousuke/hajimeteno/issues"
+  },
+  "homepage": "https://github.com/uedakousuke/hajimeteno#readme",
+  "dependencies": {
+    "cities": "^2.0.0",
+    "express": "^4.17.1",
+    "express-ejs-layouts": "^2.5.0",
+    "mongodb": "^3.5.8"
+  }
+}
