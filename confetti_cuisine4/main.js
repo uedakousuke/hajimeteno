@@ -1,34 +1,27 @@
 //expressをロードして、
 const express = require("express")
-//MongoDBモジュールをロードする
-const MongoDB =require("mongodb").MongoClient,
-      dbURL = "mongodb://127.0.0.1:27017",
-      dbName = "recipe_db";
-      //ローカルデータベースサーバーへの接続を設定
-MongoDB.connect(dbURL,(error,client) => {
-    if(error) throw error;
-    //MongoDBサーバーへの接続から、recipe_dbデータベースを取得
-    let db =client.db(dbName);
-    // contactsコレクションから全レコードを取り出す
-    db.collection("contacts")
-    .find()
-    .toArray((error,data) => {
-        if (error) throw error;
-        console.log(data);
-        //結果をコンソールにログ出力
-    });
-    db.collection("contacts").insert(
-        {
-            name: "Freddie Mercury",
-            email: "fred@queen.com"
-        },
-        (error,db) => {
-            if(error)throw error;
-            console.log(db);
-        }
-    );
+const mongoose = require("mongoose");
+//データベース接続を設定
+mongoose.connect(
+    "mongodb://127.0.0.1:27017/recipe_db",
+    {useNewUrlParser: true}
+);
+//データベースをdb変数に代入
+const db =mongoose.connection;
+db.once("open",() => {
+    //「Mongooseを使ってMongoDBに接続できました！」
+    console.log("Successfully connected to MongoDB using Mongoose!");
 });
-
+//新しいSubscriberを実体化する
+const Subscriber = require("./models/subscriber");
+var myQuery = Subscriber.findOne({
+    name:"Jon Wexler"
+})
+.where("email",/wexler/);
+//クエリを実行し、コールバック関数でエラーとデータを処理する
+myQuery.exec((error,data) => {
+    if(data)console.log(data.name);
+});
 
 //expressアプリケーションを実体化する
 app = express();
@@ -36,6 +29,7 @@ const homeController = require("./controllers/homeController");
 //express-ejs-layoutsモジュールをロード
 const layouts = require("express-ejs-layouts");
 const errorController = require("./controllers/errorController");
+
 //ejsの使用をアプリケーションに設定
 app.set("view engine","ejs");
 app.set("port",process.env.PORT || 3000)
