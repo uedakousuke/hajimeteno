@@ -12,6 +12,7 @@ db.once("open",() => {
     //「Mongooseを使ってMongoDBに接続できました！」
     console.log("Successfully connected to MongoDB using Mongoose!");
 });
+mongoose.Promise = global.Promise
 //新しいSubscriberを実体化する
 const Subscriber = require("./models/subscriber");
 var myQuery = Subscriber.findOne({
@@ -22,14 +23,13 @@ var myQuery = Subscriber.findOne({
 myQuery.exec((error,data) => {
     if(data)console.log(data.name);
 });
-
 //expressアプリケーションを実体化する
 app = express();
 const homeController = require("./controllers/homeController");
 //express-ejs-layoutsモジュールをロード
 const layouts = require("express-ejs-layouts");
 const errorController = require("./controllers/errorController");
-
+const subscribersController = require("./controllers/subscribersController")
 //ejsの使用をアプリケーションに設定
 app.set("view engine","ejs");
 app.set("port",process.env.PORT || 3000)
@@ -47,10 +47,14 @@ app.use(express.static("public"))
 app.get("/",(req,res) => {
     res.send("Welcome to Confetti Cuisine!");
 });
+//リクエストを、getAllSubscribers関数に渡す
+app.get("/subscribers",subscribersController.getAllSubscribers,(req,res,next)=> {
+    res.render("subscribers",{subscribers: req.data})
+});
 //コースページと連絡ページと、連絡フォーム送出のために追加
 app.get("/courses",homeController.showCourses);
-app.get("/contact",homeController.showSignUp);
-app.post("/contact",homeController.postedSignUpForm);
+app.get("/contact",subscribersController.getSubscriptionPage);
+app.post("/subscribe",subscribersController.saveSubscriber);
 
 //エラー処理用にミドルウェア関数を追加
 app.use(errorController.pageNotFoundError);
